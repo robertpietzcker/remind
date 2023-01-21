@@ -179,6 +179,7 @@ $ifthen.VREPot_Factor not "%c_VREPot_Factor%" == "off"
   p_VREPot_Factor(all_te) "Rescale factor for renewable potentials" / %c_VREPot_Factor% /
 $endif.VREPot_Factor
 
+p_deltaCapReference(ttot,all_regi,all_te,rlf)        "read-in deltacap values in reference run"
 p_boundtmp(tall,all_regi,all_te,rlf)                 "read-in bound on capacities"
 p_bound_cap(tall,all_regi,all_te,rlf)                "read-in bound on capacities"
 pm_data(all_regi,char,all_te)                        "Large array for most technical parameters of technologies; more detail on the individual technical parameters can be found in the declaration of the set 'char' "
@@ -390,6 +391,7 @@ vm_pebiolc_price(ttot,all_regi)                      "Bioenergy price according 
 
 v_costOM(ttot,all_regi)                              "o&m costs"
 v_costInv(ttot,all_regi)                             "investment costs"
+v_costInvTeAdjToRef(ttot,all_regi,all_te)            "annual investments into a technology due to adjustment costs"
 vm_costTeCapital(ttot,all_regi,all_te)               "investment costs"
 vm_costAddTeInv(tall,all_regi,all_te,emi_sectors)    "additional sector-specific investment cost of demand-side transformation"
 

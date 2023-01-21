@@ -1530,5 +1530,12 @@ $endif.cm_rcp_scen_build
 *** initialize global target deviation scalar
 sm_globalBudget_dev = 1;
 
+*' load vm_deltacap values from reference gdx to allow limiting changes in the first time step via q_LimitChangeToRef
+if (cm_startyear gt 2005,
+execute_load "input_ref.gdx", p_deltaCapReference = vm_deltacap.l;
+);
+
+
+
 *** EOF ./core/datainput.gms
 

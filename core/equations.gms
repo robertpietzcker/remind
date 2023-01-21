@@ -31,12 +31,16 @@ q_costInv(t,regi)..
   =e=
 *** investment cost of conversion technologies
   sum(en2en(enty,enty2,te),
-    v_costInvTeDir(t,regi,te) + v_costInvTeAdj(t,regi,te)$teAdj(te)
+    v_costInvTeDir(t,regi,te) 
+    + v_costInvTeAdj(t,regi,te)$teAdj(te)
+    + v_costInvTeAdjToRef(t,regi,te)$teAdj(te)
   )
   +
 *** investment cost of non-conversion technologies (storage, grid etc.)
   sum(teNoTransform,
-    v_costInvTeDir(t,regi,teNoTransform) + v_costInvTeAdj(t,regi,teNoTransform)$teAdj(teNoTransform)
+    v_costInvTeDir(t,regi,teNoTransform) 
+    + v_costInvTeAdj(t,regi,teNoTransform)$teAdj(teNoTransform)
+    + v_costInvTeAdjToRef(t,regi,teNoTransform)$teAdj(teNoTransform)
   )
 *** additional transmission and distribution cost (increases hydrogen cost at low hydrogen penetration levels when hydrogen infrastructure is not yet developed) 
   +
@@ -832,16 +836,51 @@ q_limitCO2(ttot+1,regi) $((pm_ttot_val(ttot+1) ge max(cm_startyear,2055)) AND (t
          =l=
          vm_emiTe(ttot,regi,"co2");
 
+***---------------------------------------------------------------------------
+*' Adjustment costs
+***---------------------------------------------------------------------------
 q_eqadj(regi,ttot,teAdj(te))$(ttot.val ge max(2010, cm_startyear)) ..
-         v_adjFactor(ttot,regi,te)
-         =e=
-         power(
-         (sum(te2rlf(te,rlf),vm_deltaCap(ttot,regi,te,rlf)) - sum(te2rlf(te,rlf),vm_deltaCap(ttot-1,regi,te,rlf)))/(pm_ttot_val(ttot)-pm_ttot_val(ttot-1))
-         ,2)
-                /( sum(te2rlf(te,rlf),vm_deltaCap(ttot-1,regi,te,rlf)) + p_adj_seed_reg(ttot,regi) * p_adj_seed_te(ttot,regi,te)  
-                   + p_adj_deltacapoffset("2010",regi,te)$(ttot.val eq 2010) + p_adj_deltacapoffset("2015",regi,te)$(ttot.val eq 2015)
-                   + p_adj_deltacapoffset("2020",regi,te)$(ttot.val eq 2020) + p_adj_deltacapoffset("2025",regi,te)$(ttot.val eq 2025)
-                  );
+  v_adjFactor(ttot,regi,te)
+  =e=
+  power(
+    ( 
+      ( sum(te2rlf(te,rlf), vm_deltaCap(ttot,regi,te,rlf)) - sum(te2rlf(te,rlf), vm_deltaCap(ttot-1,regi,te,rlf)) ) 
+      / ( pm_ttot_val(ttot)-pm_ttot_val(ttot-1) )
+    ) , 2
+  )
+  / ( sum(te2rlf(te,rlf), vm_deltaCap(ttot-1,regi,te,rlf)) + p_adj_seed_reg(ttot,regi) * p_adj_seed_te(ttot,regi,te)  
+      + p_adj_deltacapoffset("2010",regi,te)$(ttot.val eq 2010) + p_adj_deltacapoffset("2015",regi,te)$(ttot.val eq 2015)
+      + p_adj_deltacapoffset("2020",regi,te)$(ttot.val eq 2020) + p_adj_deltacapoffset("2025",regi,te)$(ttot.val eq 2025)
+    )
+;
+
+***---------------------------------------------------------------------------
+*' Adjustment costs to limit changes compared to REF in cm_startyear
+***---------------------------------------------------------------------------
+
+q_AdjToRef(regi,ttot,teAdj(te))$( (ttot.val gt 2005) AND (ttot.val eq cm_startyear ) )  ..
+  v_AdjToRef(ttot,regi,te)
+  =e=
+  power(
+    ( 
+      ( sum(te2rlf(te,rlf), vm_deltaCap(ttot,regi,te,rlf)) 
+        - sum(te2rlf(te,rlf), p_deltaCapReference(ttot,regi,te,rlf)) 
+        - v_AdjToRefSlack(ttot,regi,te)
+      ) 
+
+      / ( pm_ttot_val(ttot) - pm_ttot_val(ttot-1) )
+    ) , 2
+  )
+;
+    
+q_costInvTeAdjToRef(ttot,regi,teAdj)$( (ttot.val gt 2005) AND (ttot.val eq cm_startyear ) )  ..
+  v_costInvTeAdjToRef(ttot,regi,teAdj)
+  =e=
+  vm_costTeCapital(ttot,regi,teAdj) 
+  * p_adj_coeff(ttot,regi,teAdj) 
+  * v_AdjToRef(ttot,regi,teAdj) 
+  * 1.05**(pm_ts(ttot) / 2)
+;
 
 ***---------------------------------------------------------------------------
 *' The use of early retirement is restricted by the following equations:
@@ -951,7 +990,7 @@ q_shBioTrans(t,regi)..
   sum(se2fe("seliqbio",entyFeTrans,te), vm_prodFe(t,regi,"seliqbio",entyFeTrans,te) )
 ;
  
-***---------------------------------------------------------------------------
+***---------------------------------------------------------------------------te
 *' Share of final energy carrier in sector
 ***---------------------------------------------------------------------------
 
