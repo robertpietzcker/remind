@@ -355,7 +355,7 @@ vm_costCESMkup(ttot,all_regi,all_in)                  "CES markup cost to repres
 vm_taxrevimplicitQttyTargetTax(ttot,all_regi)        "quantity target bound implemented through implict tax"
 vm_taxrevimplicitPriceTax(ttot,all_regi,entySe,all_enty,sector)   "final energy price target implemented through implict tax"
 vm_taxrevimplicitPePriceTax(ttot,all_regi,all_enty)  "primary energy price target implemented through implict tax"
-
+v_AdjToRefSlack(ttot,all_regi,all_te)                "slack variable, allowing region/te-specific no-cost changes in deltacap compared to REF in cm_startyear"
 ;
 
 ***----------------------------------------------------------------------------------------
@@ -391,7 +391,8 @@ vm_pebiolc_price(ttot,all_regi)                      "Bioenergy price according 
 
 v_costOM(ttot,all_regi)                              "o&m costs"
 v_costInv(ttot,all_regi)                             "investment costs"
-v_costInvTeAdjToRef(ttot,all_regi,all_te)            "annual investments into a technology due to adjustment costs"
+v_costInvTeAdjToRef(ttot,all_regi,all_te)            "annual additional costs into a technology due to adjustment costs for changing deltacap compared to REF"
+v_AdjToRef(ttot,all_regi,all_te)                     "additional adjustment value for changing deltacap compared to REF. (different unit than v_adjFactor)"
 vm_costTeCapital(ttot,all_regi,all_te)               "investment costs"
 vm_costAddTeInv(tall,all_regi,all_te,emi_sectors)    "additional sector-specific investment cost of demand-side transformation"
 
@@ -508,6 +509,8 @@ q_limitGeopot(ttot,all_regi,all_enty,rlf)             "constraint on annual rene
 q_costInvTeAdj(ttot,all_regi,all_te)                  "calculation of total adjustment costs for a technology"
 q_costInvTeDir(ttot,all_regi,all_te)                  "calculation of total direct investment costs (without adjustment costs) for a technology"
 q_eqadj(all_regi,tall,all_te)                         "calculation of adjustment factor for a technology"
+q_AdjToRef(ttot,all_regi,all_te)                      "calculation of adjustment for a technology due to changes to REF in cm_startyear"
+q_costInvTeAdjToRef(ttot,all_regi,all_te)             "calculation of total adjustment costs for a technology due to changes to REF in cm_startyear"
 
 q_limitCapEarlyReti(ttot,all_regi,all_te)             "constraint to avoid reactivation of retired capacities"
 q_smoothphaseoutCapEarlyReti(ttot,all_regi,all_te)    "phase-out constraint for early retirement to avoid immediate retirement"

@@ -858,7 +858,7 @@ q_eqadj(regi,ttot,teAdj(te))$(ttot.val ge max(2010, cm_startyear)) ..
 *' Adjustment costs to limit changes compared to REF in cm_startyear
 ***---------------------------------------------------------------------------
 
-q_AdjToRef(regi,ttot,teAdj(te))$( (ttot.val gt 2005) AND (ttot.val eq cm_startyear ) )  ..
+q_AdjToRef(ttot,regi,teAdj(te))$( (ttot.val gt 2005) AND (ttot.val eq cm_startyear ) )  ..
   v_AdjToRef(ttot,regi,te)
   =e=
   power(
