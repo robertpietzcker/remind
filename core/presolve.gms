@@ -383,23 +383,6 @@ pm_macAbatLev(ttot,regi,enty)$( ttot.val gt 2015 )
 pm_macAbatLev("2015",regi,"co2luc") = 0;
 pm_macAbatLev("2020",regi,"co2luc") = 0;
 
-*** Limit MAC abatement level increase to 5 % p.a., or 2 % p.a. for cement
-*** before 2050. 
-loop (ttot$( ttot.val ge 2015 ),
-  pm_macAbatLev(ttot,regi,MACsector(enty))
-    = min(
-        pm_macAbatLev(ttot,regi,enty),
-
-        ( pm_macAbatLev(ttot-1,regi,enty)
-        + ( ( s_macChange$( NOT sameas(enty,"co2cement") OR  ttot.val gt 2050 )
-            + 0.02$(            sameas(enty,"co2cement") AND ttot.val le 2050 )
-  	    )
-          * pm_ts(ttot)
-          )
-        )
-      );
-);
-
 *** For a later run in a cascade, limit the changes in cm_startyear compared to the level in the reference run to c_limitMACchangeStartyear * s_macChange * time step length  
 loop (ttot$( (ttot.val ge 2015) AND (ttot.val eq cm_startyear) ),
   pm_macAbatLev(ttot,regi,MACsector(enty))
@@ -410,6 +393,23 @@ loop (ttot$( (ttot.val ge 2015) AND (ttot.val eq cm_startyear) ),
                 + 0.02$(            sameas(enty,"co2cement") AND ttot.val le 2050 )
   	          )
             * pm_ts(ttot) * c_limitMACchangeStartyear
+          )
+        )
+      );
+);
+
+*** Limit MAC abatement level increase to 5 % p.a., or 2 % p.a. for cement
+*** before 2050. 
+loop (ttot$( ( ttot.val ge 2015 ) AND (ttot.val gt cm_startyear ) ),
+  pm_macAbatLev(ttot,regi,MACsector(enty))
+    = min(
+        pm_macAbatLev(ttot,regi,enty),
+
+        ( pm_macAbatLev(ttot-1,regi,enty)
+        + ( ( s_macChange$( NOT sameas(enty,"co2cement") OR  ttot.val gt 2050 )
+            + 0.02$(            sameas(enty,"co2cement") AND ttot.val le 2050 )
+  	    )
+          * pm_ts(ttot)
           )
         )
       );
