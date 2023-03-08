@@ -1534,12 +1534,18 @@ $endif.cm_rcp_scen_build
 *** initialize global target deviation scalar
 sm_globalBudget_dev = 1;
 
+
+***--------------------------------------
+*' Limiting the change in cm_startyear
+***--------------------------------------
+
 *' load production values from reference gdx to allow penalizing changes vs reference run in the first time step via q_changeProdStartyearCost/q21_taxrevChProdStartYear
 if (cm_startyear gt 2005,
 execute_load "input_ref.gdx", p_prodSeReference = vm_prodSe.l;
 execute_load "input_ref.gdx", p_prodFEReference = vm_prodFE.l;
 execute_load "input_ref.gdx", p_prodUeReference = vm_prodUe.l;
 execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
+execute_load "input_ref.gdx", p_macAbatLevReference = pm_macAbatLev;
 );
 
 p_prodAllReference(t,regi,te) =

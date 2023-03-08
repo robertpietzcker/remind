@@ -233,6 +233,7 @@ p_prodFEReference(ttot,all_regi,all_enty,all_enty,all_te)         "Final Energy 
 p_prodUeReference(ttot,all_regi,all_enty,all_enty,all_te)         "Useful Energy output of a te in the reference run [TWa]"
 p_co2CCSReference(ttot,all_regi,all_enty,all_enty,all_te,rlf)     "Captured CO2 put through the CCS chain in ccs2te (pipelines/injection) in the reference run [GtC]"
 p_prodAllReference(ttot,all_regi,all_te)                          "Sum of the above in the reference run. As each te has only one type of output, the differing units should not be a problem"
+p_macAbatLevReference(ttot,all_regi,all_enty)                     "Level of MAC abatement per time step, region, and source in the reference run [fraction]"
 
 
 * Energy carrier Prices

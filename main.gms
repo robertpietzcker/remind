@@ -1096,7 +1096,7 @@ parameter
 *' * (any other number) limit of gas demand from 2025 on in Germany in EJ/yr
 *'
 parameter
-  c_SlackMultiplier   "Muliplicative factor to up/downscale the slack size for v_changeProdStartyearSlack"
+  c_SlackMultiplier   "Multiplicative factor to up/downscale the slack size for v_changeProdStartyearSlack"
 ;
   c_SlackMultiplier = 1; !! def 1
 *'
@@ -1104,6 +1104,12 @@ parameter
   c_changeProdCost   "Muliplicative factor to up/downscale the costs for vm_changeProdStartyearCost"
 ;
   c_changeProdCost = 5; !! def 5
+*'
+parameter
+  c_limitMACchangeStartyear   "Muliplicative factor that reduces the MAC change in cm_startyear compared to value in reference run"
+;
+  c_limitMACchangeStartyear = 0.3; !! def 0.3 for (real year,cm_startyear) pair (2023,2025). Reduce to 0.2 for (2024,2025), to 0.1 for (2025,2025), 
+*' then increase to 0.7(?) for (2025, 2030), down to 0.5 for (2026,2030), 
 *'
 ***-----------------------------------------------------------------------------
 *' ####                     FLAGS
