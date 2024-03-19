@@ -38,6 +38,12 @@ execute_loadpoint "input";
 ***    start iteration loop
 ***--------------------------------------------------------------------------
 
+o_Time_start = jstart;
+o_Time_Now   = jnow;
+o_Time_EndofLastSolitrLoop  = o_Time_Now;
+o_Time_SecElapsedSinceStart = (o_Time_Now - o_Time_start) * 24 * 3600;
+put_utility "msg" / "Time check: Seconds elapsed since start of REMIND: " o_Time_SecElapsedSinceStart:20:0  " , Loop starts now.";
+
 LOOP(iteration $(ord(iteration)<(cm_iteration_max+1)),
 
       IF(ord(iteration)>(cm_iteration_max-1),
@@ -75,12 +81,31 @@ if( (cm_startyear gt 2005),
 *RP* for faster debugging, turn solprint immediately on
 $IF %cm_nash_mode% == "debug" option solprint = on ;
 
+
+
+o_Time_solitrLoopStart  = jnow;
+
 o_modelstat = 100;
 loop(sol_itr$(sol_itr.val <= cm_solver_try_max),
-    if(o_modelstat ne 2,
+  o_Time_solitrSolveStart  = jnow; 
+  if(o_modelstat ne 2,
 $batinclude "./modules/include.gms" solve
-    )
+  )
 );  !! end of sol_itr loop, when o_modelstat is not equal to 2
+
+o_Time_Now   = jnow;
+o_Time_SecElapsedSinceStartofThisSolitrLoop = ( o_Time_Now -   o_Time_solitrLoopStart  ) * 24 * 3600;
+put_utility "msg" / "Time check: Seconds elapsed since the start of this solitr loop" o_Time_SecElapsedSinceStartofThisSolitrLoop:20:0 ;
+
+o_Time_SecElapsedSinceEndofLastSolitrLoop = ( o_Time_Now -   o_Time_EndofLastSolitrLoop  ) * 24 * 3600;
+o_Time_SecElapsedSinceStart = (o_Time_Now - o_Time_start) * 24 * 3600;
+o_Time_EndofLastSolitrLoop  = o_Time_Now; 
+
+o_Time_SecElapsedSinceStartofThisSolitrLoop_iter(iteration) = o_Time_SecElapsedSinceStartofThisSolitrLoop;
+o_Time_SecElapsedSinceEndofLastSolitrLoop_iter(iteration)   = o_Time_SecElapsedSinceEndofLastSolitrLoop;  
+
+put_utility "msg" // "Time check: Seconds elapsed since the end of the last iteration" o_Time_SecElapsedSinceEndofLastSolitrLoop:20:0 ;
+put_utility "msg" / "Time check: Seconds elapsed since start of REMIND: " o_Time_SecElapsedSinceStart:20:0 ;
 
 ***---------------------------------------------------------
 ***     Track of changes between iterations

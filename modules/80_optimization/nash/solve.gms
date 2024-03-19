@@ -146,5 +146,8 @@ display p80_repy_thisSolitr;
 display p80_repy_iteration;
 display p80_repy_nashitr_solitr;
 
+o_Time_SecElapsedSinceStartofThisSolitrSolve = (jnow -  o_Time_solitrSolveStart ) * 24 * 3600;
+put_utility foo_msg "msg" / "Time check: Seconds elapsed since start of this solitr solve" o_Time_SecElapsedSinceStartofThisSolitrSolve:20:0 " , iteration " iteration.tl:3:0  " , sol_itr " sol_itr.tl:3:0 ;
+o_Time_SecElapsedSinceStartofThisSolitrSolve_iter(iteration,sol_itr) = o_Time_SecElapsedSinceStartofThisSolitrSolve;
 
 *** EOF ./modules/80_optimization/nash/solve.gms

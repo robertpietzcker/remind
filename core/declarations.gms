@@ -292,6 +292,11 @@ o_negitr_disc_cons_dr5_reg(iteration,all_regi)       "estimated discounted consu
 o_negitr_disc_cons_drInt_reg(iteration,all_regi)     "estimated discounted consumption 2005-2100 with internal discount rate. 'estimated' because of different times step lengths around 2100 [T$]"
 o_negitr_total_forc(iteration)                       "total forcing in 2100"
 
+o_Time_SecElapsedSinceStartofThisSolitrSolve_iter(iteration,sol_itr)  "track o_Time_SecElapsedSinceStartofThisSolitrSolve over iterations"         
+o_Time_SecElapsedSinceStartofThisSolitrLoop_iter(iteration)           "track o_Time_SecElapsedSinceStartofThisSolitrLoop over iterations"
+o_Time_SecElapsedSinceEndofLastSolitrLoop_iter(iteration)             "track o_Time_SecElapsedSinceEndofLastSolitrLoop over iterations"
+
+
 ***----------------------------------------------------------------------------------------
 ***------------------------------------------------trade module----------------------------
 pm_ttot_val(ttot)                                    "value of ttot set element"
@@ -556,6 +561,16 @@ $ENDIF.sehe_upper
 ***----------------------------------------------------------------------------------------
 scalars
 o_modelstat                                           "critical solver status for solution"
+o_Time_start                                          "start time for REMIND - from jstart" 
+o_Time_Now                                            "current time"
+o_Time_solitrSolveStart                               "remember time when the current solitr solve started"
+o_Time_solitrLoopStart                                "remember time when the current loop over solitr started"
+o_Time_EndofLastSolitrLoop                            "remember time when the last solitr loop ended"
+o_Time_SecElapsedSinceStart                           "Seconds elapsed since model start"
+o_Time_SecElapsedSinceStartofThisSolitrSolve          "Seconds elapsed since start of the current solitr solve"
+o_Time_SecElapsedSinceStartofThisSolitrLoop           "Seconds elapsed since start of this solitr loop"
+o_Time_SecElapsedSinceEndofLastSolitrLoop             "Seconds elapsed since last solitr loop ended (postsolve, presolve & solitr loop)"
+
 
 ***----------------------------------------------------------------------------------------
 ***------------------------------------------------MACRO module----------------------------
