@@ -1066,7 +1066,7 @@ q_demFeSectorShare(t, regi,entySe,entyFe,te,sector,emiMkt)$(             !! te i
   )..
   sum(seAgg2se(seAgg,entySe),  !! Only use ONE share for all three subtypes, therefore use seAg. The sum only serves to determine seAgg
     v_demFeSectorShare(t, regi,seAgg,entyFe,sector,emiMkt)/100  !! the share of this one sector/mkt in the overall carrier production
-
+  )
   * sum(se2fe(entySe,entyFe2,te2), vm_prodFe(t,regi,entySe,entyFe2,te2) ) !! total output of eg fossil liquids from td - sums over pet, die and hos
   =e=
   vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
