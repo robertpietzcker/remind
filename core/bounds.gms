@@ -562,4 +562,12 @@ $ENDIF.transpGDPscale
 v_changeProdStartyearSlack.up(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) = + c_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
 v_changeProdStartyearSlack.lo(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) = - c_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
 
+
+v_demFeSectorShare.fx(t, regi,entySe,entyFe,sector,emiMkt) = 0;
+v_demFeSectorShare.up(t, regi,seAgg,entyFe,sector,emiMkt)$(
+    sector2emiMkt(sector,emiMkt)                                        !! only for relevant sector/emiMkt combinations
+    AND ( sameas(seAgg,"all_seliq") OR sameas(seAgg,"all_sega") )       !! only do subtypes of liquids and gases
+  ) = 200;
+
+
 *** EOF ./core/bounds.gms

@@ -1053,6 +1053,34 @@ q_shBioTrans(t,regi)..
   sum(se2fe("seliqbio",entyFeTrans,te), vm_prodFe(t,regi,"seliqbio",entyFeTrans,te) )
 ;
 
+
+***---------------------------------------------------------------------------
+*' Fix shares of carrier subtypes across sectors for fegas and feliq
+***---------------------------------------------------------------------------
+
+q_demFeSectorShare(t, regi,entySe,entyFe,te,sector,emiMkt)$(             !! te is only included here to allow use of se2fe in the $conditional for the equation
+    (seAgg2se("all_seliq",entySe) OR seAgg2se("all_sega",entySe) )       !! only do subtypes of liquids and gases
+    AND (se2fe(entySe,entyFe,te) )
+    AND (entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) !! only for relevant entyFe/sector/emiMkt combinations
+    AND (t.val ge 2030)                                                  !! only turn on after 2030 to allow smooth transition from the fixed shares in 2020
+  )..
+  v_demFeSectorShare(t, regi,seAgg,entyFe,sector,emiMkt)$seAgg2se(seAgg,entySe)/100  !! the share of this one sector/mkt in the overall carrier production
+  !! only use ONE share for all three subtypes - therefore use seAgg
+  * sum(se2fe(entySe,entyFe2,te2), vm_prodFe(t,regi,entySe,entyFe2,te2) ) !! total output of eg fossil liquids from td - sums over pet, die and hos
+  =e=
+  vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
+;
+
+q_checkSectorSum(t, regi,entySe)$(t.val ge 2030)..  !! this is implemented over entySe instead of seAgg to facilitate the sum below. Will yield 3 times the same equation
+  v_SectorShSum(t, regi,entySe)
+  =e=
+  sum( (entySe,entyFe,sector,emiMk)$( se2fe(entySe,entyFe,te) AND (entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) ),    
+    sum(seAgg2se(seAgg,entySe), v_demFeSectorShare(t, regi,seAgg,entyFE,sector,emiMkt) )  !! v_demFeSectorShare is only defined for seAgg   
+  )
+;
+
+
+
 ***---------------------------------------------------------------------------
 *' Shares of final energy carrier in sector
 ***---------------------------------------------------------------------------
