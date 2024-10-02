@@ -1075,7 +1075,7 @@ q_demFeSectorShare(t, regi,entySe,entyFe,te,sector,emiMkt)$(             !! te i
 q_checkSectorSum(t, regi,entySe)$(t.val ge 2030)..  !! this is implemented over entySe instead of seAgg to facilitate the sum below. Will yield 3 times the same equation
   v_SectorShSum(t, regi,entySe)
   =e=
-  sum( (entyFe,sector,emiMkt)$( se2fe(entySe,entyFe,te) AND (entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) ),    
+  sum( (entyFe,te,sector,emiMkt)$( se2fe(entySe,entyFe,te) AND (entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) ),    
     sum(seAgg2se(seAgg,entySe), v_demFeSectorShare(t, regi,seAgg,entyFE,sector,emiMkt) )  !! v_demFeSectorShare is only defined for seAgg   
   )
 ;
