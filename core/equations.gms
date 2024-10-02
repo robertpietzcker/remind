@@ -1058,7 +1058,7 @@ q_shBioTrans(t,regi)..
 *' Fix shares of carrier subtypes across sectors for fegas and feliq
 ***---------------------------------------------------------------------------
 
-q_demFeSectorShare(t, regi,entySe,entySe,te,sector,emiMkt)$(             !! te is only included here to allow use of se2fe in the $conditional for the equation
+q_demFeSectorShare(t, regi,entySe,entyFe,te,sector,emiMkt)$(             !! te is only included here to allow use of se2fe in the $conditional for the equation
     (seAgg2se("all_seliq",entySe) OR seAgg2se("all_sega",entySe) )       !! only do subtypes of liquids and gases
     AND (se2fe(entySe,entyFe,te) )
     AND (entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) !! only for relevant entyFe/sector/emiMkt combinations
