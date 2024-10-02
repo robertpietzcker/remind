@@ -1058,12 +1058,15 @@ q_shBioTrans(t,regi)..
 *' Fix shares of carrier subtypes across sectors for fegas and feliq
 ***---------------------------------------------------------------------------
 
-q_demFeSectorShare(t, regi,entySe,entyFe,te,sector,emiMkt)$(             !! te is only included here to allow use of se2fe in the $conditional for the equation
+q_demFeSectorShare(t, regi,entySe,entySe,te,sector,emiMkt)$(             !! te is only included here to allow use of se2fe in the $conditional for the equation
     (seAgg2se("all_seliq",entySe) OR seAgg2se("all_sega",entySe) )       !! only do subtypes of liquids and gases
     AND (se2fe(entySe,entyFe,te) )
     AND (entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) !! only for relevant entyFe/sector/emiMkt combinations
     AND (t.val ge 2030)                                                  !! only turn on after 2030 to allow smooth transition from the fixed shares in 2020
   )..
+1 =e= 1;
+$ontext
+
   sum(seAgg2se(seAgg,entySe),  !! Only use ONE share for all three subtypes, therefore use seAg. The sum only serves to determine seAgg
     v_demFeSectorShare(t, regi,seAgg,entyFe,sector,emiMkt)/100  !! the share of this one sector/mkt in the overall carrier production
   )
@@ -1071,15 +1074,66 @@ q_demFeSectorShare(t, regi,entySe,entyFe,te,sector,emiMkt)$(             !! te i
   =e=
   vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
 ;
+$offtext
 
 q_checkSectorSum(t, regi,entySe)$(t.val ge 2030)..  !! this is implemented over entySe instead of seAgg to facilitate the sum below. Will yield 3 times the same equation
+1 =e= 1;
+$ontext
+
   v_SectorShSum(t, regi,entySe)
   =e=
   sum( (entyFe,te,sector,emiMkt)$( se2fe(entySe,entyFe,te) AND (entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) ),    
     sum(seAgg2se(seAgg,entySe), v_demFeSectorShare(t, regi,seAgg,entyFE,sector,emiMkt) )  !! v_demFeSectorShare is only defined for seAgg   
   )
+$offtext
 ;
 
+
+
+
+*******************
+
+q_demFeSectorShareAgg(t, regi,seAgg,entyFe,sector,emiMkt)$(             !! te is only included here to allow use of se2fe in the $conditional for the equation
+    ( sameas(seAgg,"all_seliq") OR sameas(seAgg,"all_sega")  )       !! only do subtypes of liquids and gases
+    AND (seAgg2fe(seAgg,entyFe) )
+    AND (entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) !! only for relevant entyFe/sector/emiMkt combinations
+  )..
+  v_demFeSectorShareAgg(t, regi,seAgg,entyFe,sector,emiMkt)/100  !! the share of this one entyFE x sector x mkt in the overall carrier production
+  * sum(seAgg2se(seAgg,entySe),                                             !! sum over bio/fos/syn
+      sum(se2fe(entySe,entyFe2,te2), vm_prodFe(t,regi,entySe,entyFe2,te2) ) !! total output of eg fossil liquids from td, eg sum over pet, die and hos
+    )
+  =e=
+  sum(seAgg2se(seAgg,entySe),                                                !! sum over bio/fos/syn
+    vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
+  )
+;
+
+q_checkSectorSumAgg(t, regi,seAgg)..  
+  v_SectorShSumAgg(t, regi,seAgg)
+  =e=
+  sum( (entyFe,te,sector,emiMkt)$( seAgg2fe(seAgg,entyFe) AND (entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) ),
+      v_demFeSectorShareAgg(t, regi,seAgg,entyFE,sector,emiMkt) 
+  )   
+;
+
+q_demFeSectorShareDetail(t, regi,entySe,entyFe,te,sector,emiMkt)$(             !! te is only included here to allow use of se2fe in the $conditional for the equation
+    (seAgg2se("all_seliq",entySe) OR seAgg2se("all_sega",entySe) )       !! only do subtypes of liquids and gases
+    AND (se2fe(entySe,entyFe,te) )
+    AND (entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) !! only for relevant entyFe/sector/emiMkt combinations
+  )..
+  v_demFeSectorShareDetail(t, regi,entySe,entyFe,te,sector,emiMkt) /100      !! the share of this one entyFE x sector x mkt in the overall carrier subtype production
+  * sum(se2fe(entySe,entyFe2,te2), vm_prodFe(t,regi,entySe,entyFe2,te2) ) !! total output of eg fossil liquids from td - sums over pet, die and hos
+  =e=
+  vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
+;
+
+q_checkSectorSumDetail(t, regi,entySe)..  
+  v_SectorShSumDetail(t, regi,entySe)
+  =e=
+  sum( (entyFe,te,sector,emiMkt)$( se2fe(entySe,entyFe,te) AND (entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) ),
+      v_demFeSectorShareDetail(t, regi,entySe,entyFE,te,sector,emiMkt) 
+  ) 
+;
 
 
 ***---------------------------------------------------------------------------

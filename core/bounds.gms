@@ -563,11 +563,32 @@ v_changeProdStartyearSlack.up(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_star
 v_changeProdStartyearSlack.lo(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) = - c_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
 
 
-v_demFeSectorShare.fx(t, regi,entySe,entyFe,sector,emiMkt) = 0;
+v_demFeSectorShare.fx(t, regi,enty,enty,sector,emiMkt) = 0;
 v_demFeSectorShare.up(t, regi,seAgg,entyFe,sector,emiMkt)$(
     sector2emiMkt(sector,emiMkt)                                        !! only for relevant sector/emiMkt combinations
     AND ( sameas(seAgg,"all_seliq") OR sameas(seAgg,"all_sega") )       !! only do subtypes of liquids and gases
-  ) = 200;
+    AND entyFe2Sector(entyFe,sector) 
+    AND sector2emiMkt(sector,emiMkt)
+    AND seAgg2fe(seAgg,entyFe) 
+  ) = 1000000;
 
+
+v_demFeSectorShareAgg.fx(t, regi,enty,enty,sector,emiMkt) = 0;
+v_demFeSectorShareAgg.up(t, regi,seAgg,entyFe,sector,emiMkt)$(
+    sector2emiMkt(sector,emiMkt)                                        !! only for relevant sector/emiMkt combinations
+    AND ( sameas(seAgg,"all_seliq") OR sameas(seAgg,"all_sega") )       !! only do subtypes of liquids and gases
+    AND entyFe2Sector(entyFe,sector) 
+    AND sector2emiMkt(sector,emiMkt)
+    AND seAgg2fe(seAgg,entyFe) 
+  ) = 100000;  
+
+v_demFeSectorShareDetail.fx(t, regi,enty,enty,te,sector,emiMkt) = 0;
+v_demFeSectorShareDetail.up(t, regi,entySe,entyFe,te,sector,emiMkt)$(
+    sector2emiMkt(sector,emiMkt)                                        !! only for relevant sector/emiMkt combinations
+    AND ( seAgg2se("all_seliq",entySe) OR seAgg2se("all_sega",entySe)  )       !! only do subtypes of liquids and gases
+    AND entyFe2Sector(entyFe,sector) 
+    AND sector2emiMkt(sector,emiMkt)
+    AND se2fe(entySe,entyFe,te) 
+  ) = 1000000;  
 
 *** EOF ./core/bounds.gms
