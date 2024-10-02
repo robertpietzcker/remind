@@ -1058,6 +1058,20 @@ q_shBioTrans(t,regi)..
 *' Fix shares of carrier subtypes across sectors for fegas and feliq
 ***---------------------------------------------------------------------------
 
+q_prodFesumSe(t,regi,entySe)$(seAgg2se("all_seliq",entySe) OR seAgg2se("all_sega",entySe) )..       !! only do subtypes of liquids and gases
+  v_prodFesumSe(t,regi,entySe)                                                        !! total output of eg fossil liquids from td - sums over pet, die and hos
+  =e=
+  sum((entyFe2,te2)$se2fe(entySe,entyFe2,te2), vm_prodFe(t,regi,entySe,entyFe2,te2) ) 
+;
+
+q_prodFesumSeAgg(t,regi,seAgg)$(sameas(seAgg,"all_seliq") OR sameas(seAgg,"all_sega"))..       !! only do subtypes of liquids and gases
+  v_prodFesumSeAgg(t,regi,seAgg)                                                               !! total output of eg liquids from td - sums over pet, die and hos
+  =e=
+  sum(seAgg2se(seAgg,entySe),                                                                  !! sum over syn/bio/fos
+    sum((entyFe2,te2)$se2fe(entySe,entyFe2,te2), vm_prodFe(t,regi,entySe,entyFe2,te2) ) 
+  )
+;
+
 q_demFeSectorShare(t, regi,entySe,entyFe,te,sector,emiMkt)$(             !! te is only included here to allow use of se2fe in the $conditional for the equation
     (seAgg2se("all_seliq",entySe) OR seAgg2se("all_sega",entySe) )       !! only do subtypes of liquids and gases
     AND (se2fe(entySe,entyFe,te) )
@@ -1098,10 +1112,8 @@ q_demFeSectorShareAgg(t, regi,seAgg,entyFe,sector,emiMkt)$(             !! te is
     AND (seAgg2fe(seAgg,entyFe) )
     AND (entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) !! only for relevant entyFe/sector/emiMkt combinations
   )..
-  v_demFeSectorShareAgg(t, regi,seAgg,entyFe,sector,emiMkt)/100  !! the share of this one entyFE x sector x mkt in the overall carrier production
-  * sum(seAgg2se(seAgg,entySe),                                             !! sum over bio/fos/syn
-      sum(se2fe(entySe,entyFe2,te2), vm_prodFe(t,regi,entySe,entyFe2,te2) ) !! total output of eg fossil liquids from td, eg sum over pet, die and hos
-    )
+  v_demFeSectorShareAgg(t, regi,seAgg,entyFe,sector,emiMkt)/100             !! the share of this one entyFE x sector x mkt in the overall carrier production
+  * v_prodFesumSeAgg(t,regi,seAgg)
   =e=
   sum(seAgg2se(seAgg,entySe),                                                !! sum over bio/fos/syn
     vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
@@ -1122,7 +1134,7 @@ q_demFeSectorShareDetail(t, regi,entySe,entyFe,te,sector,emiMkt)$(             !
     AND (entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) !! only for relevant entyFe/sector/emiMkt combinations
   )..
   v_demFeSectorShareDetail(t, regi,entySe,entyFe,te,sector,emiMkt) /100      !! the share of this one entyFE x sector x mkt in the overall carrier subtype production
-  * sum(se2fe(entySe,entyFe2,te2), vm_prodFe(t,regi,entySe,entyFe2,te2) ) !! total output of eg fossil liquids from td - sums over pet, die and hos
+  * v_prodFesumSe(t,regi,entySe)
   =e=
   vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
 ;

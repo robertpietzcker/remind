@@ -412,7 +412,8 @@ v_SectorShSumAgg(ttot,all_regi,all_enty)                                       "
 v_demFeSectorShareDetail(ttot,all_regi,all_enty,all_enty,all_te,emi_sectors,all_emiMkt)  "share of individual sector in total supply of an energy carrier (eg industry/ETS in liquids)"
 v_SectorShSumDetail(ttot,all_regi,all_enty)                                       "check sum to determine if all FE of one carrier type is split to end uses"
 
-
+v_prodFesumSe(ttot,all_regi,all_enty)
+v_prodFesumSeAgg(ttot,all_regi,all_enty)
 
 vm_demFeSector_afterTax(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "fe demand per sector and emission market after tax. Demand sectors should use this variable in their fe balance equations so demand side marginals include taxes effects. [TWa]"
 v_costFu(ttot,all_regi)                              "fuel costs"
@@ -586,6 +587,9 @@ q_checkSectorSum(ttot, all_regi,all_enty)                                       
 
 q_demFeSectorShareAgg(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "determine  vm_demFeSectorShare"
 q_checkSectorSumAgg(ttot, all_regi,all_enty)                                         "check if the sum of shares reaches 100%"
+
+q_prodFesumSeAgg(ttot,all_regi,all_enty)
+q_prodFesumSe(ttot,all_regi,all_enty)
 
 q_demFeSectorShareDetail(ttot,all_regi,all_enty,all_enty,all_te,emi_sectors,all_emiMkt) "determine  vm_demFeSectorShare"
 q_checkSectorSumDetail(ttot, all_regi,all_enty)                                         "check if the sum of shares reaches 100%"
