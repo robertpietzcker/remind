@@ -1064,7 +1064,7 @@ q_demFeSectorShare(t, regi,entySe,entyFe,te,sector,emiMkt)$(             !! te i
     AND (entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) !! only for relevant entyFe/sector/emiMkt combinations
     AND (t.val ge 2030)                                                  !! only turn on after 2030 to allow smooth transition from the fixed shares in 2020
   )..
-  sum($seAgg2se(seAgg,entySe),  !! Only use ONE share for all three subtypes, therefore use seAg. The sum only serves to determine seAgg
+  sum(seAgg2se(seAgg,entySe),  !! Only use ONE share for all three subtypes, therefore use seAg. The sum only serves to determine seAgg
     v_demFeSectorShare(t, regi,seAgg,entyFe,sector,emiMkt)/100  !! the share of this one sector/mkt in the overall carrier production
 
   * sum(se2fe(entySe,entyFe2,te2), vm_prodFe(t,regi,entySe,entyFe2,te2) ) !! total output of eg fossil liquids from td - sums over pet, die and hos
