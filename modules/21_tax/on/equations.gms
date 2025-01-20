@@ -1,10 +1,12 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/21_tax/on/equations.gms
+
+*' @equations
 
 ***---------------------------------------------------------------------------
 *'  The dynamic bioenergy sustainability tax is calculated: it scales linearly
@@ -41,7 +43,6 @@ q21_taxrev(t,regi)$(t.val ge max(2010,cm_startyear))..
   + sum(in, v21_taxrevCES(t,regi,in))
   + v21_taxrevResEx(t,regi)   
   + v21_taxrevPE2SE(t,regi)
-  + v21_taxrevXport(t,regi)
   + v21_taxrevSO2(t,regi)
   + v21_taxrevBio(t,regi)
   - vm_costSubsidizeLearning(t,regi)
@@ -185,17 +186,9 @@ v21_taxrevResEx(t,regi) =e=  sum(pe2rlf(peEx(enty),rlf), p21_tau_fuEx_sub(t,regi
 q21_taxrevPE2SE(t,regi)$(t.val ge max(2010,cm_startyear))..
 v21_taxrevPE2SE(t,regi) 
 =e= SUM(pe2se(enty,enty2,te),
-          (p21_tau_pe2se_tax(t,regi,te) + p21_tau_pe2se_sub(t,regi,te) + p21_tau_pe2se_inconv(t,regi,te)) * vm_prodSe(t,regi,enty,enty2,te)
+          (p21_tau_pe2se_tax(t,regi,te) + p21_tau_pe2se_sub(t,regi,te)) * vm_prodSe(t,regi,enty,enty2,te)
        )
     - p21_taxrevPE2SE0(t,regi);
-
-***---------------------------------------------------------------------------
-*'  Calculation of export taxes: tax rate times export volume
-*'  Documentation of overall tax approach is above at q21_taxrev.
-***---------------------------------------------------------------------------
-q21_taxrevXport(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevXport(t,regi) =e= SUM(tradePe(enty), p21_tau_xpres_tax(t,regi,enty) * vm_Xport(t,regi,enty))
-                            - p21_taxrevXport0(t,regi);
 
 ***---------------------------------------------------------------------------
 *'  Calculation of so2 tax: tax rate times emissions
@@ -285,7 +278,7 @@ q21_taxrevFlex(t,regi)$( t.val ge max(2010, cm_startyear) ) ..
       !! vm_flexAdj is electricity price reduction/increases for flexible/
       !! inflexible technologies change sign such that flexible technologies
       !! get subsidy
-      -vm_flexAdj(t,regi,te) 
+      - vm_flexAdj(t,regi,te) 
     * vm_demSe(t,regi,enty,enty2,te)
     )
   - p21_taxrevFlex0(t,regi)
@@ -388,5 +381,6 @@ q21_SeTaxRate(t,regi,te)$(teSeTax(te))..
   )
 ;
 
+*' @stop
 
 *** EOF ./modules/21_tax/on/equations.gms

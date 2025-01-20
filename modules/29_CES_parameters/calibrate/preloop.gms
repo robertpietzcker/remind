@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -160,6 +160,37 @@ if (smin((t,regi_dyn29(regi),ppf_29(in)), pm_cesdata(t,regi,in,"price")) le 0,
   );
   execute_unload "abort.gdx";
   abort "Some ppf prices are <= 0. Check ./modules/29_CES_parameters/calibrate/input/pm_cesdata_price_XXX.inc!";
+);
+
+*** Limit changes in prices for susceptible pf
+if (sum((t,regi_dyn29(regi),in_limit_price_change_29(ppf_29(in))),
+      (pm_cesdata(t,regi,in,"price") > 2   * p29_cesdata_load(t,regi,in,"price"))
+    + (pm_cesdata(t,regi,in,"price") < 0.5 * p29_cesdata_load(t,regi,in,"price"))
+    ),
+  put logfile, " " / "limiting pf price changes" /;
+  loop ((t,regi_dyn29(regi),in_limit_price_change_29(ppf_29(in))),
+    sm_tmp 
+    = pm_cesdata(t,regi,in,"price")
+    / p29_cesdata_load(t,regi,in,"price");
+
+    if (sm_tmp < 0.5 OR 2 < sm_tmp,
+      put pm_cesdata.tn(t,regi,in,"price"), " [",
+          p29_cesdata_load(t,regi,in,"price"), " -> ",
+	  pm_cesdata(t,regi,in,"price"), "] -> ";
+
+      pm_cesdata(t,regi,in,"price")
+      = min(
+          max(
+            pm_cesdata(t,regi,in,"price"),
+            0.5 * p29_cesdata_load(t,regi,in,"price")
+          ),
+          2 * p29_cesdata_load(t,regi,in,"price")
+        );
+
+      put pm_cesdata(t,regi,in,"price") /;
+    );
+  );
+  putclose logfile, " " /;
 );
 
 *** Write prices to file
@@ -325,8 +356,8 @@ loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2020),
 loop (ttot$( ttot.val ge 2005),
   pm_cesdata(ttot,regi_dyn29(regi),in_29,"price")$( ppf_29(in_29) AND (NOT sameas(in_29,"entrp_frgt_lo")) )
   = max(
-    ( 1e-2$( NOT in_industry_dyn37(in_29) )
-    + 1e-4$(     in_industry_dyn37(in_29) )
+    ( 1e-2$( NOT (in_buildings_dyn36(in_29) OR in_industry_dyn37(in_29)) )
+    + 1e-4$(     (in_buildings_dyn36(in_29) OR in_industry_dyn37(in_29)) )
     ),
     pm_cesdata(ttot,regi,in_29,"price")
   );
@@ -890,7 +921,38 @@ $ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "1"
 *** c_CES_calibration_industry_FE_target == 1 means that
 *** industry ppfen input prices are scaled to make the Euler identity hold
 
-*** Abort if any industry EEK value is lower than subsector output quantity
+*** Limit changes in prices for industry EEK
+if (sum((t,regi_dyn29(regi),in_limit_price_change_29(ppfKap_industry_dyn37(in))),
+      (pm_cesdata(t,regi,in,"price") > 2   * p29_cesdata_load(t,regi,in,"price"))
+    + (pm_cesdata(t,regi,in,"price") < 0.5 * p29_cesdata_load(t,regi,in,"price"))
+    ),
+  put logfile, " " / "limiting pf price changes" /;
+  loop ((t,regi_dyn29(regi),in_limit_price_change_29(ppfKap_industry_dyn37(in))),
+    sm_tmp 
+    = pm_cesdata(t,regi,in,"price")
+    / p29_cesdata_load(t,regi,in,"price");
+
+    if (sm_tmp < 0.5 OR 2 < sm_tmp,
+      put pm_cesdata.tn(t,regi,in,"price"), " [",
+          p29_cesdata_load(t,regi,in,"price"), " -> ",
+	  pm_cesdata(t,regi,in,"price"), "] -> ";
+
+      pm_cesdata(t,regi,in,"price")
+      = min(
+          max(
+            pm_cesdata(t,regi,in,"price"),
+            0.5 * p29_cesdata_load(t,regi,in,"price")
+          ),
+          2 * p29_cesdata_load(t,regi,in,"price")
+        );
+
+      put pm_cesdata(t,regi,in,"price") /;
+    );
+  );
+  putclose logfile, " " /;
+);
+
+*** Abort if any industry EEK value is higher than subsector output quantity
 sm_tmp = smin((t,regi_dyn29(regi),
                cesOut2cesIn(ue_industry_dyn37(out),ppfKap(in))
                ),

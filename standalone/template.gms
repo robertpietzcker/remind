@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -118,13 +118,14 @@ $setGlobal codePerformance  off       !! def = off
 
 ***--------------- declaration of parameters for switches ----------------------
 parameters
+cm_nash_mode          "mode for solving nash problem, (1): debug (2): parallel"
 cm_iteration_max      "number of Negishi iterations (up to 49)"
 cm_solver_try_max      "maximum number of inner iterations within one Negishi iteration (<10)"
 c_keep_iteration_gdxes   "save intermediate iteration gdxes"
 cm_nash_autoconverge  "choice of nash convergence mode"
 cm_emiscen            "policy scenario choice"
-cm_co2_tax_2020       "level of co2 tax in year 2020 in $ per t CO2eq, makes sense only for emiscen eq 9 and 45_carbonprice exponential"
-cm_co2_tax_growth     "growth rate of carbon tax"
+cm_taxCO2_startyear    "level of co2 tax in start year in $ per t CO2eq"
+cm_taxCO2_expGrowth     "growth rate of carbon tax"
 c_macscen            "use of mac"
 cm_nucscen            "nuclear option choice"
 cm_ccapturescen       "carbon capture option choice"
@@ -187,6 +188,7 @@ cm_DiscRateScen          "Scenario for the implicit discount rate applied to the
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+cm_nash_mode           = 2;     !! def = 2  !! regexp = 1|2
 cm_iteration_max       = 1;     !! def = 1
 cm_solver_try_max       = 2;     !! def = 2
 c_keep_iteration_gdxes = 0;     !! def = 0
@@ -195,8 +197,8 @@ $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 
 cm_emiscen        = 1;         !! def = 1
 $setglobal cm_rcp_scen  none   !! def = "none"
-cm_co2_tax_2020   = -1;        !! def = -1
-cm_co2_tax_growth = 1.05;      !! def = 1.05
+cm_taxCO2_startyear   = -1;   !! def = -1
+cm_taxCO2_expGrowth = 1.05;      !! def = 1.05
 c_macscen         = 1;         !! def = 1
 
 cm_nucscen       = 2;        !! def = 2
@@ -279,7 +281,6 @@ cm_DiscRateScen = 0;!! def = 0
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *--------------------flags------------------------------------------------------------
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
-$setGlobal cm_nash_mode  parallel   !! def = parallel
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setGlobal c_skip_output  off        !! def = off
 $setGlobal cm_MOFEX  off        !! def = off

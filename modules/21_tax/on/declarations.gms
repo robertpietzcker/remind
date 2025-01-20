@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -8,7 +8,6 @@
 Parameters
 p21_tau_so2_tax(tall,all_regi)                     "so2 tax path"
 p21_tau_pe2se_tax(tall,all_regi,all_te)        "tax path for primary energy technologies"
-p21_tau_pe2se_inconv(tall,all_regi,all_te)     "inconvenience cost path for primary energy technologies"
 p21_tau_pe2se_sub(tall,all_regi,all_te)        "subsidy path for primary energy technologies"
 p21_max_fe_sub(tall,all_regi,all_enty)         "maximum final energy subsidy levels from REMIND version prior to rev. 5429 [$/TWa]"
 p21_prop_fe_sub(tall,all_regi,all_enty)        "subsidy proportional cap to avoid liquids increasing dramatically"
@@ -32,7 +31,6 @@ p21_taxrevFE0(ttot,all_regi)                                 "reference level va
 p21_taxrevCES0(ttot,all_regi,all_in)                         "reference level value of ces production tax"
 p21_taxrevResEx0(ttot,all_regi)                              "reference level value of resource extraction tax"
 p21_taxrevPE2SE0(ttot,all_regi)                              "reference level value of pe2se technologies tax"
-p21_taxrevXport0(ttot,all_regi)                              "reference level value of exports tax"
 p21_taxrevSO20(ttot,all_regi)                                "reference level value of SO2 tax"
 p21_taxrevBio0(ttot,all_regi)                                "reference level value of bioenergy tax"
 p21_implicitDiscRate0(ttot,all_regi)                         "reference level value of implicit tax on energy efficient capital"
@@ -50,7 +48,6 @@ p21_taxrevFE_iter(iteration,ttot,all_regi)                 "reference level valu
 p21_taxrevCES_iter(iteration,ttot,all_regi,all_in)         "reference level value of ces production tax revenue"
 p21_taxrevResEx_iter(iteration,ttot,all_regi)              "reference level value of resource extraction tax revenue"
 p21_taxrevPE2SE_iter(iteration,ttot,all_regi)              "reference level value of pe2se technologies tax revenue"
-p21_taxrevXport_iter(iteration,ttot,all_regi)              "reference level value of exports tax revenue"
 p21_taxrevSO2_iter(iteration,ttot,all_regi)                "reference level value of SO2 tax revenue"
 p21_taxrevBio_iter(iteration,ttot,all_regi)                "reference level value of bioenergy tax revenue"
 p21_implicitDiscRate_iter(iteration,ttot,all_regi)         "reference level value of implicit tax on energy efficient capital"
@@ -68,9 +65,11 @@ p21_tau_CO2_tax_gdx_bau(ttot,all_regi)       "tax path from gdx, may overwrite d
 
 p21_implicitDiscRateMarg(ttot,all_regi,all_in)  "Difference between the normal discount rate and the implicit discount rate"
 
-p21_tau_SE_tax_rampup(ttot,all_regi,all_te,teSeTax_coeff)  "Paramters of logistic function to describe relationship between SE electricity tax rate and share of technology in total electricity demand"
+p21_tau_SE_tax_rampup(ttot,all_regi,all_te,teSeTax_coeff)  "Parameters of logistic function to describe relationship between SE electricity tax rate and share of technology in total electricity demand"
+$ifThen.SEtaxRampUpParam not "%cm_SEtaxRampUpParam%" == "off" 
+  p21_SEtaxRampUpParameters(ext_regi,all_te,teSeTax_coeff)   "config values for SE electricity tax rate tech specific ramp up logistic function parameters" / %cm_SEtaxRampUpParam% /
+$endif.SEtaxRampUpParam
 ;
-
 
 $ifThen.import not "%cm_import_tax%" == "off" 
 Parameter
@@ -115,7 +114,6 @@ v21_taxrevFE(ttot,all_regi)                     "tax on final energy (?)"
 v21_taxrevCES(ttot,all_regi,all_in)             "tax on ces production function"
 v21_taxrevResEx(ttot,all_regi)                  "tax on resource extraction (?)"
 v21_taxrevPE2SE(ttot,all_regi)                  "tax on pe2se technologies (?)"
-v21_taxrevXport(ttot,all_regi)                  "tax on exports (?)"
 v21_taxrevSO2(ttot,all_regi)                    "tax on SO2 (to reflect health impacts)"
 v21_taxrevBio(ttot,all_regi)                    "tax on bioenergy (to reflect sustainability constraints on bioenergy production)"
 v21_taxrevFlex(ttot,all_regi)                   "tax on technologies with flexible or inflexible electricity input"
@@ -146,7 +144,6 @@ q21_taxrevFE(ttot,all_regi)                     "calculation of tax on final ene
 q21_taxrevCES(ttot,all_regi,all_in)             "calculation of tax on ces production function"
 q21_taxrevResEx(ttot,all_regi)                  "calculation of tax on resource extraction"
 q21_taxrevPE2SE(ttot,all_regi)                  "calculation of tax on pe2se technologies"
-q21_taxrevXport(ttot,all_regi)                  "calculation of tax on exports"
 q21_taxrevSO2(ttot,all_regi)                    "calculation of tax on SO2"
 q21_taxrevBio(ttot,all_regi)                    "calculation of tax on bioenergy"
 q21_taxrevFlex(ttot,all_regi)                   "tax on technologies with flexible or inflexible electricity input"
