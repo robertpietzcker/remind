@@ -71,4 +71,7 @@ loop(regi$(p32_factorStorage(regi,"csp") < 1),
 *** Fix capacity to 0 for elh2VRE now that the equation q32_elh2VREcapfromTestor pushes elh2, not anymore elh2VRE, and capital costs are 1
 vm_cap.fx(t,regi,"elh2VRE",rlf) = 0;
 
+*** fix storloss to zero until 2015 as q32_storloss is only active from 2020 onwards
+v32_storloss.fx(t,regi,teVRE)$(t.val lt 2020) = 0;
+
 *** EOF ./modules/32_power/IntC/bounds.gms
