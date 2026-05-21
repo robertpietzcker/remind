@@ -164,4 +164,9 @@ $endif.fixedUE_scenario
 !! Fix to avoid reoccurring random infeasibilities. May need to be excluded if e.g. synfuels (or something else) are set to zero.
 vm_demFeSector_afterTax.lo(t,regi,entySe,"fesos","indst",emiMkt)$(NOT sameAs(emiMkt, "other")) = 1e-16;
 
+'* bound to prevent the model to increase industry demands more than 5% above the values in the reference scenario (as given by input_ref). This prevents eg BECCS-related spikes in cement use
+if (cm_startyear gt 2005,
+  vm_cesIO.up(t,regi,in) $ ( ces_industry_dyn37("ue_industry",in) ) = 1.05 * p37_cesIO_baseline(t,regi,in);
+);
+
 *** EOF ./modules/37_industry/subsectors/bounds.gms
